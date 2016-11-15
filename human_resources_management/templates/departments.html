@@ -1,4 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Departments</h1>
+    <a href="{{ url_for('new_department') }}"> Create new department </a>
+    {% for department in departments %}
+        <option value="{{ loop.index }}">{{ department }}</option>
+    {% endfor %}
 {% endblock %}

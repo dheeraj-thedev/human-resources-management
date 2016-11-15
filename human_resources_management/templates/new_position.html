@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="{{ url_for('new_position') }}" method="post" name="new_position">
+        <p>Name: <input type="text" name="name"></p>
+        <p>Description: <input type="text" name="description"></p>
+        <p><input type="submit" value="Create New Position"></p>
+    </form>
+{% endblock %}

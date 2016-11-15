@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="{{ url_for('new_department') }}" method="post" name="new_department">
+        <p>Name: <input type="text" name="name"></p>
+        <p>Parental Department:
+            <select name="parental_department_id">
+                <option value="0">empty</option>
+                {% for department in departments %}
+                    <option value="{{ loop.index }}">{{ department }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>Leader: <input type="text" name="leader_id">
+            <select name="leader_id">
+                <option value="0">empty</option>
+                {% for user in users %}
+                    <option value="{{ loop.index }}">{{ user }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>Description: <input type="text" name="description"></p>
+        <p><input type="submit" value="Create New Department"></p>
+    </form>
+{% endblock %}
