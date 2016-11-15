@@ -3,6 +3,8 @@
     <h1>Departments</h1>
     <a href="{{ url_for('new_department') }}"> Create new department </a>
     {% for department in departments %}
-        <option value="{{ loop.index }}">{{ department }}</option>
+        <div>
+            <h3><a href="{{ url_for('update_department', department_id = loop.index) }}"> {{ department }} </a></h3>
+        </div>
     {% endfor %}
 {% endblock %}

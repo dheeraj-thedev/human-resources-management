@@ -3,6 +3,8 @@
     <h1>Positions</h1>
     <a href="{{ url_for('new_position') }}"> Create new position </a>
     {% for position in positions %}
-        <option value="{{ loop.index }}">{{ position }}</option>
+        <div>
+            <h3><a href="{{ url_for('update_position', position_id = loop.index) }}"> {{ position }} </a></h3>
+        </div>
     {% endfor %}
 {% endblock %}

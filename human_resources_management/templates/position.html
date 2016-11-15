@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if position %}
+        <form action="{{ url_for('update_position', position_id = position.id) }}" method="post"
+              name="update_position">
+            <p>Name: <input type="text" name="name" value="{{ position.name }}"></p>
+            <p>Description: <input type="text" name="description" value="{{ position.description }}"></p>
+            <p><input type="submit" value="Update Position"></p>
+        </form>
+    {% else %}
+        <h2>Position not found.</h2>
+    {% endif %}
+{% endblock %}

@@ -59,6 +59,39 @@ def new_user():
         return redirect(url_for('show_users'))
 
 
+@app.route('/user/<int:user_id>/', methods=['GET', 'POST'])
+def update_user(user_id):
+    if request.method == 'GET':
+        departments = query_db('select * from departments')
+        departments = [department[1] for department in departments]
+        positions = query_db('select * from positions')
+        positions = [position[1] for position in positions]
+        user = query_db('select * from users where id = ?', [user_id], one=True)
+        if user is not None:
+            user = dict(zip(
+                ['id', 'first_name', 'last_name', 'department_id', 'position_id', 'email', 'phone', 'date_of_birth'],
+                user))
+            return render_template('user.html', title=user['last_name'], user=user, departments=departments,
+                                   positions=positions)
+        return render_template('user.html', title='not found')
+    elif request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        department_id = request.form['department_id']
+        position_id = request.form['position_id']
+        email = request.form['email']
+        phone = request.form['phone']
+        date_of_birth = request.form['date_of_birth']
+        db = get_db()
+        db.execute(
+            'UPDATE users SET'
+            ' first_name=?, last_name=?, department_id=?, position_id=?, email=?, phone=?, date_of_birth=? '
+            ' WHERE id=?',
+            [first_name, last_name, department_id, position_id, email, phone, date_of_birth, user_id])
+        db.commit()
+        return redirect(url_for('show_users'))
+
+
 @app.route('/positions/')
 def show_positions():
     positions = query_db('select * from positions')
@@ -80,6 +113,27 @@ def new_position():
             '(name, description)'
             ' VALUES (?, ?)',
             [name, description])
+        db.commit()
+        return redirect(url_for('show_positions'))
+
+
+@app.route('/position/<int:position_id>/', methods=['GET', 'POST'])
+def update_position(position_id):
+    if request.method == 'GET':
+        position = query_db('select * from positions where id = ?', [position_id], one=True)
+        if position is not None:
+            position = dict(zip(['id', 'name', 'description'], position))
+            return render_template('position.html', title=position['name'], position=position)
+        return render_template('position.html', title='not found')
+    elif request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        db = get_db()
+        db.execute(
+            'UPDATE positions SET'
+            ' name=?, description=?'
+            ' WHERE id=?',
+            [name, description, position_id])
         db.commit()
         return redirect(url_for('show_positions'))
 
@@ -111,6 +165,36 @@ def new_department():
             '(name, parental_department_id, leader_id, description)'
             ' VALUES (?, ?, ?, ?)',
             [name, parental_department_id, leader_id, description])
+        db.commit()
+        return redirect(url_for('show_departments'))
+
+
+@app.route('/department/<int:department_id>/', methods=['GET', 'POST'])
+def update_department(department_id):
+    if request.method == 'GET':
+        users = query_db('select * from users')
+        users = [(user[1] + " " + user[2]) for user in users]
+        departments = query_db('select * from departments where id !=?', [department_id])
+        departments = [department[1] for department in departments]
+
+        department = query_db('select * from departments where id = ?', [department_id], one=True)
+        if department is not None:
+            department = dict(zip(['id', 'name', 'parental_department_id', 'leader_id', 'description'], department))
+            return render_template('department.html', title=department['name'], department=department,
+                                   departments=departments,
+                                   users=users)
+        return render_template('department.html', title='not found')
+    elif request.method == 'POST':
+        name = request.form['name']
+        parental_department_id = request.form['parental_department_id']
+        leader_id = request.form['leader_id']
+        description = request.form['description']
+        db = get_db()
+        db.execute(
+            'UPDATE departments SET '
+            'name=?, parental_department_id=?, leader_id=?, description=?'
+            ' WHERE id=?',
+            [name, parental_department_id, leader_id, description, department_id])
         db.commit()
         return redirect(url_for('show_departments'))
 

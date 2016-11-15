@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if department %}
+        <form action="{{ url_for('update_department', department_id = department.id) }}" method="post"
+              name="update_department">
+            <p>Name: <input type="text" name="name" value="{{ department.name }}"></p>
+            <p>Parental Department:
+                <select name="parental_department_id">
+                    <option value="0">empty</option>
+                    {% for dprt in departments %}
+                        {% if department.parental_department_id == loop.index %}
+                            <option selected value="{{ loop.index }}">{{ dprt }}</option>
+                        {% else %}
+                            <option value="{{ loop.index }}">{{ dprt }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Leader:
+                <select name="leader_id">
+                    <option value="0">empty</option>
+                    {% for user in users %}
+                        {% if department.leader_id == loop.index %}
+                            <option selected value="{{ loop.index }}">{{ user }}</option>
+                        {% else %}
+                            <option value="{{ loop.index }}">{{ user }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Description: <input type="text" name="description" value="{{ department.description }}"></p>
+            <p><input type="submit" value="Update Department"></p>
+        </form>
+    {% else %}
+        <h2>Department not found.</h2>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user %}
+        <form action="{{ url_for('update_user', user_id = user.id) }}" method="post" name="update_user">
+            <p>First Name: <input type="text" name="first_name" value="{{ user.first_name }}"></p>
+            <p>Last Name: <input type="text" name="last_name" value="{{ user.last_name }}"></p>
+            <p>Department:
+                <select name="department_id">
+                    <option value="0">empty</option>
+                    {% for department in departments %}
+                        {% if user.department_id == loop.index %}
+                            <option selected value="{{ loop.index }}">{{ department }}</option>
+                        {% else %}
+                            <option value="{{ loop.index }}">{{ department }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Position:
+                <select name="position_id">
+                    <option value="0">empty</option>
+                    {% for position in positions %}
+                        {% if user.position_id == loop.index %}
+                            <option selected value="{{ loop.index }}">{{ position }}</option>
+                        {% else %}
+                            <option value="{{ loop.index }}">{{ position }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Email: <input type="text" name="email" value="{{ user.email }}"></p>
+            <p>Phone: <input type="text" name="phone" value="{{ user.phone }}"></p>
+            <p>Date of birth: <input type="date" name="date_of_birth" value="{{ user.date_of_birth }}"></p>
+            <p><input type="submit" value="Update User"></p>
+        </form>
+    {% else %}
+        <h2>User not found.</h2>
+    {% endif %}
+{% endblock %}
