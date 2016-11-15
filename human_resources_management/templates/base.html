@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+        <title>HRM.{{ title }}</title>
+    {% else %}
+        <title>HRM</title>
+    {% endif %}
+</head>
+<body>
+    <div><a href="{{ url_for('index') }}">Human Resources Manager</a></div>
+    {% block content %}{% endblock %}
+</body>
+</html>

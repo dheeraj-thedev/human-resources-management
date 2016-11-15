@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>HRM</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     <h1> Simple human resources manager </h1>
     <ul>
         <li><a href="{{ url_for('show_users') }}">Users</a></li>
         <li><a href="{{ url_for('show_positions') }}">Positions</a></li>
         <li><a href="{{ url_for('show_departments') }}">Departments</a></li>
     </ul>
-</body>
-</html>
+{% endblock %}
