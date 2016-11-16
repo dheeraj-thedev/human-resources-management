@@ -3,9 +3,13 @@
     {% if department %}
         <form action="{{ url_for('update_department', department_id = department.id) }}" method="post"
               name="update_department">
-            <p>Name: <input type="text" name="name" value="{{ department.name }}"></p>
-            <p>Parental Department:
-                <select name="parental_department_id">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" value="{{ department.name }}" name="name">
+            </div>
+            <div class="form-group">
+                <label for="parental_department_id">Parental Department:</label>
+                <select class="form-control" id="parental_department_id" name="parental_department_id">
                     <option value="0">empty</option>
                     {% for dprt in departments %}
                         {% if department.parental_department_id == dprt.id %}
@@ -15,9 +19,10 @@
                         {% endif %}
                     {% endfor %}
                 </select>
-            </p>
-            <p>Leader:
-                <select name="leader_id">
+            </div>
+            <div class="form-group">
+                <label for="leader_id">Leader:</label>
+                <select class="form-control" id="leader_id" name="leader_id">
                     <option value="0">empty</option>
                     {% for user in users %}
                         {% if department.leader_id == user.id %}
@@ -27,12 +32,16 @@
                         {% endif %}
                     {% endfor %}
                 </select>
-            </p>
-            <p>Description: <input type="text" name="description" value="{{ department.description }}"></p>
-            <p><input type="submit" value="Update Department"></p>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" class="form-control" id="description" value="{{ department.description }}"
+                       name="description">
+            </div>
+            <p><input type="submit" class="btn btn-primary" value="Update"></p>
         </form>
         <form action="{{ url_for('delete_department', department_id = department.id) }}" method="post">
-            <p><input type="submit" value="Delete Department"></p>
+            <p><input type="submit" class="btn btn-danger" value="Delete"></p>
         </form>
     {% else %}
         <h2>Department not found.</h2>

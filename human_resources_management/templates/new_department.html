@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
     <form action="{{ url_for('new_department') }}" method="post" name="new_department">
-        <p>Name: <input type="text" name="name"></p>
-        <p>Parental Department:
-            <select name="parental_department_id">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" placeholder="department name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="parental_department_id">Parental Department:</label>
+            <select class="form-control" id="parental_department_id" name="parental_department_id">
                 <option value="0">empty</option>
                 {% for department in departments %}
                     <option value="{{ department.id }}">{{ department.name }}</option>
                 {% endfor %}
             </select>
-        </p>
-        <p>Leader:
-            <select name="leader_id">
+        </div>
+        <div class="form-group">
+            <label for="leader_id">Leader:</label>
+            <select class="form-control" id="leader_id" name="leader_id">
                 <option value="0">empty</option>
                 {% for user in users %}
                     <option value="{{ user.id }}">{{ user.name }}</option>
                 {% endfor %}
             </select>
-        </p>
-        <p>Description: <input type="text" name="description"></p>
-        <p><input type="submit" value="Create New Department"></p>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" class="form-control" id="description" placeholder="about department" name="description">
+        </div>
+        <p><input type="submit" class="btn btn-default" value="Create New Department"></p>
     </form>
 {% endblock %}
