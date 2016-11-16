@@ -4,24 +4,26 @@ import sqlite3
 class DBHelper:
     def __init__(self, path_to_db):
         self.path_to_db = path_to_db
-        with sqlite3.connect(path_to_db) as db:
-            with open('hrm_app/schema.sql') as f:
-                db.cursor().executescript(f.read())
-            db.commit()
+        # with sqlite3.connect(path_to_db) as db:
+        #     with open('hrm_app/schema.sql') as f:
+        #         db.cursor().executescript(f.read())
+        #     db.commit()
 
     def get_db(self):
         return sqlite3.connect(self.path_to_db)
 
     def query_db(self, query, args=(), one=False):
-        cur = self.get_db().execute(query, args)
+        db = self.get_db()
+        cur = db.execute(query, args)
         rv = cur.fetchall()
-        cur.close()
+        db.close()
         return (rv[0] if rv else None) if one else rv
 
     def exec_db(self, query, args):
         db = self.get_db()
         db.execute(query, args)
         db.commit()
+        db.close()
 
     def get_user(self, user_id):
         user = self.query_db('SELECT * FROM users WHERE id = ?', [user_id], one=True)
@@ -61,6 +63,9 @@ class DBHelper:
                      'WHERE id=?',
                      values)
 
+    def update_user_position(self, user_id, position_id):
+        self.exec_db('UPDATE users SET position_id=? WHERE id=?', [position_id, user_id])
+
     def delete_user(self, user_id):
         self.exec_db('DELETE FROM users WHERE id=?', [user_id])
 
@@ -90,6 +95,14 @@ class DBHelper:
     def delete_position(self, position_id):
         self.exec_db('DELETE FROM positions WHERE id=?', [position_id])
 
+    def get_positions_without_specify_id(self, position_id):
+        positions = self.query_db('SELECT id, name FROM positions WHERE id != ?', [position_id])
+        positions = [{
+                         'id': position[0],
+                         'name': position[1]
+                     } for position in positions]
+        return positions
+
     def get_positions(self):
         positions = self.query_db('SELECT id, name FROM positions')
         positions = [{
@@ -104,13 +117,23 @@ class DBHelper:
             department = dict(zip(['id', 'name', 'parental_department_id', 'leader_id', 'description'], department))
             return department
 
+    def get_department_leader(self, department_id):
+        return self.query_db('SELECT leader_id FROM departments WHERE id = ?', [department_id], one=True)[0]
+
     def get_department_with_leader(self, leader_id):
-        self.query_db('SELECT id, name FROM departments WHERE leader_id =?', [leader_id], one=True)
+        department = self.query_db('SELECT id, name, leader_id FROM departments WHERE leader_id = ?', [leader_id],
+                                   one=True)
+        if department:
+            department = dict(zip(['id', 'name', 'leader_id'], department))
+            return department
 
     def create_department(self, values):
         self.exec_db(
             'INSERT INTO departments (name, parental_department_id, leader_id, description) VALUES (?, ?, ?, ?)',
             values)
+
+    def update_leader_department(self, department_id, leader_id):
+        self.exec_db('UPDATE departments SET leader_id=? WHERE id=?', [leader_id, department_id])
 
     def update_department(self, values):
         self.exec_db('UPDATE departments SET name=?, parental_department_id=?, leader_id=?, description=? WHERE id=?',

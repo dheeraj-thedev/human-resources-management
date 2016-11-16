@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for
 
 from hrm_app import app, DB
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -37,10 +38,13 @@ def update_user(user_id):
     if request.method == 'GET':
         user = DB.get_user(user_id)
         if user:
+            department_leader = DB.get_department_with_leader(user_id)
             return render_template('user/user.html',
                                    title=user['last_name'],
                                    user=user,
+                                   users=DB.get_not_leader_users(),
                                    departments=DB.get_departments(),
+                                   department_leader=department_leader,
                                    positions=DB.get_positions())
         return render_template('user/user.html', title='not found')
 
@@ -61,10 +65,11 @@ def delete_user(user_id):
     if request.method == 'GET':
         return render_template('error.html', title='error')
     elif request.method == 'POST':
-        department = DB.get_department_with_leader(user_id)
+        if request.form.get('leader_id', -1) != -1:
+            department = DB.get_department_with_leader(user_id)
+            DB.update_leader_department(department['id'], int(request.form['leader_id']))
         DB.delete_user(user_id)
-        if department:
-            return redirect(url_for('update_department', department_id=department[0]))
+
         return redirect(url_for('show_users'))
 
 
@@ -90,9 +95,13 @@ def update_position(position_id):
     if request.method == 'GET':
         position = DB.get_position(position_id)
         if position:
+            positions = None
+            if DB.get_users_with_specify_position(position_id):
+                positions = DB.get_positions_without_specify_id(position_id)
             return render_template('position/position.html',
                                    title=position['name'],
-                                   position=position)
+                                   position=position,
+                                   positions=positions)
         return render_template('position/position.html', title='not found')
     elif request.method == 'POST':
         DB.update_position([request.form['name'], request.form['description']])
@@ -104,15 +113,12 @@ def delete_position(position_id):
     if request.method == 'GET':
         return render_template('error.html', title='error')
     elif request.method == 'POST':
-        users = DB.get_users_with_specify_position(position_id)
-        if not users:
-            DB.delete_position(position_id)
-            return redirect(url_for('show_positions'))
-        else:
-            return render_template('user/users.html',
-                                   title="Users",
-                                   users=users,
-                                   msg='You should change position for this users first.')
+        if request.form.get('position_id', -1) != -1:
+            users = DB.get_users_with_specify_position(position_id)
+            for user in users:
+                DB.update_user_position(user['id'], request.form['position_id'])
+        DB.delete_position(position_id)
+        return redirect(url_for('show_positions'))
 
 
 # ------------- DEPARTMENT ------------- #

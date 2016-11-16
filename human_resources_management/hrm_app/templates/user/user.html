@@ -51,9 +51,47 @@
             </div>
             <p><input type="submit" class="btn btn-primary" value="Update"></p>
         </form>
-        <form action="{{ url_for('delete_user', user_id = user.id) }}" method="post">
-            <p><input type="submit" class="btn btn-danger" value="Delete"></p>
-        </form>
+        {% if department_leader %}
+            <!-- Button trigger modal -->
+            <p><input type="submit" class="btn btn-danger" data-toggle="modal" data-target="#myModal" value="Delete">
+            </p>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Select new leader</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>You is trying to delete user which is leader of {{ department_leader['name'] }} department.
+                                Please, choose new leader.</p>
+                            <form action="{{ url_for('delete_user', user_id = user.id) }}" method="post"
+                                  name="update_department_leader">
+                                <div class="form-group">
+                                    <label for="leader_id">Leader:</label>
+                                    <select class="form-control" id="leader_id" name="leader_id">
+                                        <option value="0">empty</option>
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}">{{ user.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <input type="submit" class="btn btn-danger" value="Proceed">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <form action="{{ url_for('delete_user', user_id = user.id) }}" method="post"
+                  name="delete_user">
+                <input type="submit" class="btn btn-danger" value="Delete">
+            </form>
+        {% endif %}
     {% else %}
         <h2>User not found.</h2>
     {% endif %}
