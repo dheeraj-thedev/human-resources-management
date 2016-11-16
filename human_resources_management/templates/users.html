@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Users</h1>
-    <a href="{{ url_for('new_user') }}"> Create new user </a>
+    {% if msg %}
+        {{ msg }}
+    {% else %}
+        <a href="{{ url_for('new_user') }}"> Create new user </a>
+    {% endif %}
     {% if users %}
         {% for user in users %}
             <div>
-                <h3><a href="/user/{{ loop.index }}"> {{ user }} </a></h3>
+                <h3><a href="/user/{{ user.id}}"> {{ user.name }} </a></h3>
             </div>
         {% endfor %}
     {% endif %}

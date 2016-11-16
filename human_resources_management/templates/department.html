@@ -8,10 +8,10 @@
                 <select name="parental_department_id">
                     <option value="0">empty</option>
                     {% for dprt in departments %}
-                        {% if department.parental_department_id == loop.index %}
-                            <option selected value="{{ loop.index }}">{{ dprt }}</option>
+                        {% if department.parental_department_id == dprt.id %}
+                            <option selected value="{{ dprt.id }}">{{ dprt.name }}</option>
                         {% else %}
-                            <option value="{{ loop.index }}">{{ dprt }}</option>
+                            <option value="{{ dprt.id }}">{{ dprt.name }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -20,16 +20,19 @@
                 <select name="leader_id">
                     <option value="0">empty</option>
                     {% for user in users %}
-                        {% if department.leader_id == loop.index %}
-                            <option selected value="{{ loop.index }}">{{ user }}</option>
+                        {% if department.leader_id == user.id %}
+                            <option selected value="{{ user.id }}">{{ user.name }}</option>
                         {% else %}
-                            <option value="{{ loop.index }}">{{ user }}</option>
+                            <option value="{{ user.id }}">{{ user.name }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
             </p>
             <p>Description: <input type="text" name="description" value="{{ department.description }}"></p>
             <p><input type="submit" value="Update Department"></p>
+        </form>
+        <form action="{{ url_for('delete_department', department_id = department.id) }}" method="post">
+            <p><input type="submit" value="Delete Department"></p>
         </form>
     {% else %}
         <h2>Department not found.</h2>

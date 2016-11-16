@@ -7,6 +7,9 @@
             <p>Description: <input type="text" name="description" value="{{ position.description }}"></p>
             <p><input type="submit" value="Update Position"></p>
         </form>
+        <form action="{{ url_for('delete_position', position_id = position.id) }}" method="post">
+            <p><input type="submit" value="Delete Position"></p>
+        </form>
     {% else %}
         <h2>Position not found.</h2>
     {% endif %}

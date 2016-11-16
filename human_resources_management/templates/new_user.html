@@ -7,7 +7,7 @@
             <select name="department_id">
                 <option value="0">empty</option>
                 {% for department in departments %}
-                    <option value="{{ loop.index }}">{{ department }}</option>
+                    <option value="{{ department.id }}">{{ department.name }}</option>
                 {% endfor %}
             </select>
         </p>
@@ -15,7 +15,7 @@
             <select name="position_id">
                 <option value="0">empty</option>
                 {% for position in positions %}
-                    <option value="{{ loop.index }}">{{ position }}</option>
+                    <option value="{{ position.id }}">{{ position.name }}</option>
                 {% endfor %}
             </select>
         </p>
