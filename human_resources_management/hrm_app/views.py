@@ -40,29 +40,30 @@ def new_user():
 
 @app.route('/user/<int:user_id>/', methods=['GET', 'POST'])
 def update_user(user_id):
-    from datetime import datetime
+    from datetime import date
     user = DB.get_user(user_id)
     form = UserForm(request.form)
     form.department_id.choices = [(department['id'], department['name']) for department in DB.get_departments()]
     form.department_id.choices.append((0, 'empty'))
-    form.position_id.choices = [(position['id'], position['name']) for position in DB.get_positions()]
+    form.position_id.choices   = [(position['id'], position['name']) for position in DB.get_positions()]
     form.position_id.choices.append((0, 'empty'))
-    form.first_name.data = user['first_name']
-    form.last_name.data = user['last_name']
-    form.department_id.data = user['department_id']
-    form.position_id.data = user['position_id']
-    form.email.data = user['email']
-    form.phone.data = user['phone']
-    year, month, day = user['date_of_birth'].split('-')
-    form.date_of_birth.data = datetime(year=int(year), month=int(month), day=int(day))
+    form.first_name.data     = user['first_name']
+    form.last_name.data      = user['last_name']
+    form.department_id.data  = user['department_id']
+    form.position_id.data    = user['position_id']
+    form.email.data          = user['email']
+    form.phone.data          = user['phone']
+    year, month, day        = user['date_of_birth'].split('-')
+    print('Date is ' + user['date_of_birth'])
+    form.date_of_birth.data  = date(year=int(year), month=int(month), day=int(day))
     if request.method == 'POST' and form.validate():
-        DB.update_user([request.form['first_name'],
-                        request.form['last_name'],
-                        request.form['department_id'],
-                        request.form['position_id'],
-                        request.form['email'],
-                        request.form['phone'],
-                        request.form['date_of_birth'],
+        DB.update_user([form.first_name.data,
+                        form.last_name.data,
+                        form.department_id.data,
+                        form.position_id.data,
+                        form.email.data,
+                        form.phone.data,
+                        form.date_of_birth.data,
                         user_id])
         return redirect(url_for('show_users'))
     if user:
