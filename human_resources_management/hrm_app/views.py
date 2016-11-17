@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for
 
 from hrm_app import app, DB
+from hrm_app.forms import UserForm
 
 
 @app.route('/')
@@ -16,48 +17,65 @@ def show_users():
 
 @app.route('/new_user/', methods=['GET', 'POST'])
 def new_user():
-    if request.method == 'GET':
-        return render_template('user/new_user.html',
-                               title="New User",
-                               departments=DB.get_departments(),
-                               positions=DB.get_positions())
-
-    elif request.method == 'POST':
-        DB.create_user([request.form['first_name'],
-                        request.form['last_name'],
-                        request.form['department_id'],
-                        request.form['position_id'],
-                        request.form['email'],
-                        request.form['phone'],
-                        request.form['date_of_birth']])
+    form = UserForm(request.form)
+    form.department_id.choices = [(department['id'], department['name']) for department in DB.get_departments()]
+    form.department_id.choices.append((0, 'empty'))
+    form.position_id.choices = [(position['id'], position['name']) for position in DB.get_positions()]
+    form.position_id.choices.append((0, 'empty'))
+    if request.method == 'POST' and form.validate():
+        print(form.data)
+        print(type(form.data))
+        print(form.date_of_birth.data)
+        print(type(form.date_of_birth.data))
+        DB.create_user([form.first_name.data,
+                        form.last_name.data,
+                        form.department_id.data,
+                        form.position_id.data,
+                        form.email.data,
+                        form.phone.data,
+                        form.date_of_birth.data])
         return redirect(url_for('show_users'))
+    return render_template('user/new_user.html', title="New User", form=form)
 
 
 @app.route('/user/<int:user_id>/', methods=['GET', 'POST'])
 def update_user(user_id):
-    if request.method == 'GET':
-        user = DB.get_user(user_id)
-        if user:
-            department_leader = DB.get_department_with_leader(user_id)
-            return render_template('user/user.html',
-                                   title=user['last_name'],
-                                   user=user,
-                                   users=DB.get_not_leader_users(),
-                                   departments=DB.get_departments(),
-                                   department_leader=department_leader,
-                                   positions=DB.get_positions())
-        return render_template('user/user.html', title='not found')
-
-    elif request.method == 'POST':
+    from datetime import datetime
+    user = DB.get_user(user_id)
+    form = UserForm(request.form)
+    form.department_id.choices = [(department['id'], department['name']) for department in DB.get_departments()]
+    form.department_id.choices.append((0, 'empty'))
+    form.position_id.choices = [(position['id'], position['name']) for position in DB.get_positions()]
+    form.position_id.choices.append((0, 'empty'))
+    form.first_name.data = user['first_name']
+    form.last_name.data = user['last_name']
+    form.department_id.data = user['department_id']
+    form.position_id.data = user['position_id']
+    form.email.data = user['email']
+    form.phone.data = user['phone']
+    year, month, day = user['date_of_birth'].split('-')
+    form.date_of_birth.data = datetime(year=int(year), month=int(month), day=int(day))
+    if request.method == 'POST' and form.validate():
         DB.update_user([request.form['first_name'],
                         request.form['last_name'],
                         request.form['department_id'],
                         request.form['position_id'],
                         request.form['email'],
                         request.form['phone'],
-                        request.form['phone'],
+                        request.form['date_of_birth'],
                         user_id])
         return redirect(url_for('show_users'))
+    if user:
+        department_leader = DB.get_department_with_leader(user_id)
+        return render_template('user/user.html',
+                               title=user['last_name'],
+                               form=form,
+                               user=user,
+                               users=DB.get_not_leader_users(),
+                               departments=DB.get_departments(),
+                               department_leader=department_leader,
+                               positions=DB.get_positions())
+    return render_template('user/user.html', title='not found')
 
 
 @app.route('/user/delete/<int:user_id>/', methods=['GET', 'POST'])

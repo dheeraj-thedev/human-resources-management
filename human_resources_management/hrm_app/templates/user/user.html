@@ -1,56 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
+    <form method=post action="{{ url_for('update_user', user_id = user.id) }}">
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label }}
+                    <ul class=errors>
+                        {% for error in field.errors %}
+                            <li class="bg-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {{ field(class_='form-control') }}
+                </div>
+            {% endfor %}
+            <p><input type='submit' class="btn btn-primary btn-block" value='Update'>
+    </form>
     {% if user %}
-        <form action="{{ url_for('update_user', user_id = user.id) }}" method="post" name="update_user">
-            <div class="form-group">
-                <label for="first_name">First Name:</label>
-                <input type="text" class="form-control" id="first_name" value="{{ user.first_name }}" name="first_name">
-            </div>
-            <div class="form-group">
-                <label for="last_name">Last Name:</label>
-                <input type="text" class="form-control" id="last_name" value="{{ user.last_name }}" name="last_name">
-            </div>
-            <div class="form-group">
-                <label for="department_id">Department:</label>
-                <select class="form-control" id="department_id" name="department_id">
-                    <option value="0">empty</option>
-                    {% for department in departments %}
-                        {% if user.department_id == department.id %}
-                            <option selected value="{{ department.id }}">{{ department.name }}</option>
-                        {% else %}
-                            <option value="{{ department.id }}">{{ department.name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="position_id">Position:</label>
-                <select class="form-control" id="position_id" name="position_id">
-                    <option value="0">empty</option>
-                    {% for position in positions %}
-                        {% if user.position_id == position.id %}
-                            <option selected value="{{ position.id }}">{{ position.name }}</option>
-                        {% else %}
-                            <option value="{{ position.id }}">{{ position.name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" value="{{ user.email }}" name="email">
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone:</label>
-                <input type="text" class="form-control" id="phone" value="{{ user.phone }}" name="phone">
-            </div>
-            <div class="form-group">
-                <label for="date_of_birth">Date of birth:</label>
-                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                       value="{{ user.date_of_birth }}">
-            </div>
-            <p><input type="submit" class="btn btn-primary" value="Update"></p>
-        </form>
+{#        <form action="{{ url_for('update_user', user_id = user.id) }}" method="post" name="update_user">#}
+{#            <div class="form-group">#}
+{#                <label for="first_name">First Name:</label>#}
+{#                <input type="text" class="form-control" id="first_name" value="{{ user.first_name }}" name="first_name">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="last_name">Last Name:</label>#}
+{#                <input type="text" class="form-control" id="last_name" value="{{ user.last_name }}" name="last_name">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="department_id">Department:</label>#}
+{#                <select class="form-control" id="department_id" name="department_id">#}
+{#                    <option value="0">empty</option>#}
+{#                    {% for department in departments %}#}
+{#                        {% if user.department_id == department.id %}#}
+{#                            <option selected value="{{ department.id }}">{{ department.name }}</option>#}
+{#                        {% else %}#}
+{#                            <option value="{{ department.id }}">{{ department.name }}</option>#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="position_id">Position:</label>#}
+{#                <select class="form-control" id="position_id" name="position_id">#}
+{#                    <option value="0">empty</option>#}
+{#                    {% for position in positions %}#}
+{#                        {% if user.position_id == position.id %}#}
+{#                            <option selected value="{{ position.id }}">{{ position.name }}</option>#}
+{#                        {% else %}#}
+{#                            <option value="{{ position.id }}">{{ position.name }}</option>#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="email">Email:</label>#}
+{#                <input type="email" class="form-control" id="email" value="{{ user.email }}" name="email">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="phone">Phone:</label>#}
+{#                <input type="text" class="form-control" id="phone" value="{{ user.phone }}" name="phone">#}
+{#            </div>#}
+{#            <div class="form-group">#}
+{#                <label for="date_of_birth">Date of birth:</label>#}
+{#                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"#}
+{#                       value="{{ user.date_of_birth }}">#}
+{#            </div>#}
+{#            <p><input type="submit" class="btn btn-primary" value="Update"></p>#}
+{#        </form>#}
         {% if department_leader %}
             <!-- Button trigger modal -->
             <p><input type="submit" class="btn btn-danger" data-toggle="modal" data-target="#myModal" value="Delete">
@@ -66,7 +80,8 @@
                             <h4 class="modal-title" id="myModalLabel">Select new leader</h4>
                         </div>
                         <div class="modal-body">
-                            <p>You is trying to delete user which is leader of {{ department_leader['name'] }} department.
+                            <p>You is trying to delete user which is leader of {{ department_leader['name'] }}
+                                department.
                                 Please, choose new leader.</p>
                             <form action="{{ url_for('delete_user', user_id = user.id) }}" method="post"
                                   name="update_department_leader">
@@ -89,7 +104,7 @@
         {% else %}
             <form action="{{ url_for('delete_user', user_id = user.id) }}" method="post"
                   name="delete_user">
-                <input type="submit" class="btn btn-danger" value="Delete">
+                <input type="submit" class="btn btn-danger btn-block" value="Delete">
             </form>
         {% endif %}
     {% else %}
