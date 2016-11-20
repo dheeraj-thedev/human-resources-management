@@ -23,17 +23,7 @@ def new_user():
     form.position_id.choices = [(position['id'], position['name']) for position in DB.get_positions()]
     form.position_id.choices.append((0, 'empty'))
     if request.method == 'POST' and form.validate():
-        print(form.data)
-        print(type(form.data))
-        print(form.date_of_birth.data)
-        print(type(form.date_of_birth.data))
-        DB.create_user([form.first_name.data,
-                        form.last_name.data,
-                        form.department_id.data,
-                        form.position_id.data,
-                        form.email.data,
-                        form.phone.data,
-                        form.date_of_birth.data])
+        DB.create_user(form.data)
         return redirect(url_for('show_users'))
     return render_template('user/new_user.html', title="New User", form=form)
 
@@ -42,31 +32,22 @@ def new_user():
 def update_user(user_id):
     from datetime import date
     user = DB.get_user(user_id)
+    if not user:
+        return render_template('user/user.html', title='not found')
     form = UserForm(request.form)
     form.department_id.choices = [(department['id'], department['name']) for department in DB.get_departments()]
     form.department_id.choices.append((0, 'empty'))
-    form.position_id.choices   = [(position['id'], position['name']) for position in DB.get_positions()]
+    form.position_id.choices = [(position['id'], position['name']) for position in DB.get_positions()]
     form.position_id.choices.append((0, 'empty'))
-    form.first_name.data     = user['first_name']
-    form.last_name.data      = user['last_name']
-    form.department_id.data  = user['department_id']
-    form.position_id.data    = user['position_id']
-    form.email.data          = user['email']
-    form.phone.data          = user['phone']
-    year, month, day        = user['date_of_birth'].split('-')
-    print('Date is ' + user['date_of_birth'])
-    form.date_of_birth.data  = date(year=int(year), month=int(month), day=int(day))
-    if request.method == 'POST' and form.validate():
-        DB.update_user([form.first_name.data,
-                        form.last_name.data,
-                        form.department_id.data,
-                        form.position_id.data,
-                        form.email.data,
-                        form.phone.data,
-                        form.date_of_birth.data,
-                        user_id])
-        return redirect(url_for('show_users'))
-    if user:
+    if request.method == 'GET':
+        form.first_name.data = user['first_name']
+        form.last_name.data = user['last_name']
+        form.department_id.data = user['department_id']
+        form.position_id.data = user['position_id']
+        form.email.data = user['email']
+        form.phone.data = user['phone']
+        year, month, day = user['date_of_birth'].split('-')
+        form.date_of_birth.data = date(year=int(year), month=int(month), day=int(day))
         department_leader = DB.get_department_with_leader(user_id)
         return render_template('user/user.html',
                                title=user['last_name'],
@@ -76,7 +57,9 @@ def update_user(user_id):
                                departments=DB.get_departments(),
                                department_leader=department_leader,
                                positions=DB.get_positions())
-    return render_template('user/user.html', title='not found')
+    elif request.method == 'POST' and form.validate():
+        DB.update_user(form.data, user_id)
+        return redirect(url_for('show_users'))
 
 
 @app.route('/user/delete/<int:user_id>/', methods=['GET', 'POST'])

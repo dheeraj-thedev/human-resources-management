@@ -51,17 +51,36 @@ class DBHelper:
                  } for user in users]
         return users
 
-    def create_user(self, values):
+    def create_user(self, data):
         self.exec_db(
             'INSERT INTO users (first_name, last_name, department_id, position_id, email, phone, date_of_birth) '
             'VALUES (?, ?, ?, ?, ?, ?, ?)',
-            values)
+            [data['first_name'],
+             data['last_name'],
+             data['department_id'],
+             data['position_id'],
+             data['email'],
+             data['phone'],
+             data['date_of_birth']])
 
-    def update_user(self, values):
-        self.exec_db('UPDATE users '
-                     'SET first_name=?, last_name=?, department_id=?, position_id=?, email=?, phone=?, date_of_birth=? '
+    def update_user(self, data, user_id):
+        self.exec_db('UPDATE users SET '
+                     'first_name=?, '
+                     'last_name=?, '
+                     'department_id=?, '
+                     'position_id=?, '
+                     'email=?, '
+                     'phone=?, '
+                     'date_of_birth=? '
                      'WHERE id=?',
-                     values)
+                     [data['first_name'],
+                      data['last_name'],
+                      data['department_id'],
+                      data['position_id'],
+                      data['email'],
+                      data['phone'],
+                      data['date_of_birth'],
+                      user_id])
 
     def update_user_position(self, user_id, position_id):
         self.exec_db('UPDATE users SET position_id=? WHERE id=?', [position_id, user_id])
