@@ -66,12 +66,12 @@ def update_user(user_id):
 def delete_user(user_id):
     if request.method == 'GET':
         return render_template('error.html', title='error')
+
     elif request.method == 'POST':
         if request.form.get('leader_id', -1) != -1:
             department = DB.get_department_with_leader(user_id)
             DB.update_leader_department(department['id'], int(request.form['leader_id']))
         DB.delete_user(user_id)
-
         return redirect(url_for('show_users'))
 
 

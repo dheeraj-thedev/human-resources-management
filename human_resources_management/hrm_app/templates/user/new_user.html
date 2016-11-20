@@ -1,61 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <form method='post' action="{{ url_for('new_user') }}">
-        <dl>
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label }}
-                    <ul class=errors>
-                        {% for error in field.errors %}
-                            <li class="bg-danger">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {{ field(class_='form-control') }}
-                </div>
-                {#                {{ render_field(field) }}#}
-            {% endfor %}
-            <p><input type='submit' class="btn btn-primary btn-block" value='Create'>
-        </dl>
+        {% include "user/includes/user_fields.html" %}
+        <p><input type='submit' class="btn btn-primary btn-block" value='Create'>
     </form>
-    {#    <form action="{{ url_for('new_user') }}" method="post" name="new_user">#}
-    {#        <div class="form-group">#}
-    {#            <label for="first_name">First Name:</label>#}
-    {#            <input type="text" class="form-control" id="first_name" placeholder="John" name="first_name">#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="last_name">Last Name:</label>#}
-    {#            <input type="text" class="form-control" id="last_name" placeholder="Smith" name="last_name">#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="department_id">Department:</label>#}
-    {#            <select class="form-control" id="department_id" name="department_id">#}
-    {#                <option value="0">empty</option>#}
-    {#                {% for department in departments %}#}
-    {#                    <option value="{{ department.id }}">{{ department.name }}</option>#}
-    {#                {% endfor %}#}
-    {#            </select>#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="position_id">Position:</label>#}
-    {#            <select class="form-control" id="position_id" name="position_id">#}
-    {#                <option value="0">empty</option>#}
-    {#                {% for position in positions %}#}
-    {#                    <option value="{{ position.id }}">{{ position.name }}</option>#}
-    {#                {% endfor %}#}
-    {#            </select>#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="email">Email:</label>#}
-    {#            <input type="email" class="form-control" id="email" placeholder="email@example.com" name="email">#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="phone">Phone:</label>#}
-    {#            <input type="text" class="form-control" id="phone" placeholder="+380505005050" name="phone">#}
-    {#        </div>#}
-    {#        <div class="form-group">#}
-    {#            <label for="date_of_birth">Date of birth:</label>#}
-    {#            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">#}
-    {#        </div>#}
-    {#        <p><input type="submit" class="btn btn-default" value="Create New User"></p>#}
-    {#    </form>#}
 {% endblock %}
